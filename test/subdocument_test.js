@@ -64,4 +64,4 @@ describe('Sub Documents', () => {
         done();
       });
   });
-})
+});

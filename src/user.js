@@ -18,8 +18,11 @@ const UserSchema = new Schema({
     // array contains boolean value and the message when error occurs
     required: [true, 'Please provide a username']
   },
-  postCount: Number,
-  posts: [PostSchema]
+  blogPosts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'blogPost'
+  }],
+  posts: [PostSchema] /* Ignore this */ /* look down for more code */ 
   // User has many posts. We shouldn't create a seperate model as we do in SQL.
 
   /* Solution */
@@ -46,6 +49,23 @@ const UserSchema = new Schema({
 // User model represents the entire collection of data in our database, schema is just a very small component of our model. Schema just tells what kind of properties that the model to have and the type of those properties
 
 // Now create User Model which should use User schema. 'User' here is a class and represents entire collection of data
+UserSchema.virtual('postCount').get(function () {
+  // we still have to tell it what to do whenever a user actually accesses this thing, so we'll be using a function instead of a fat arrow. 
+
+  // the virtual properties work by using getter and setter features of ES6 whenever we define a getter with a virtual property postCount instead of just giving out the value of postCount mongoose and javascript are going to work together to very quickly run the function the we define inside that function we weill return the computed value
+
+  // console.log(this); Returns the instance of User model. That's why we use function instead of fat arrow since function refers the whole file instead
+  return this.posts.length;
+});
+/* Regarding postCount */
+
+// So postCount before is a number and it's supposed to reflect the number of posts that the user has. But it is upto the developer to keep track of both post count and posts and also we have to manually increment postCount whenever we add a new post.
+
+// So we're going to use an idea called Virtual types inside of mongoose.
+
+// Definition: A virtual type is ny field on a model like postCount in our case that does not get persisted over to our mongoDB we instead define the postCount property on our server so anytime we try to access this post count we will calculate the number of posts we have by just looking at the length of the array and then we return that number
+
+
 const User = mongoose.model('user', UserSchema);
 
 module.exports = User; // If any file needs User model

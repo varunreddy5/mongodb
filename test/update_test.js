@@ -14,7 +14,7 @@ describe('Updating records', () => {
   let joe;
 
   beforeEach((done) => {
-    joe = new User({ name: 'joe', postCount: 0 });
+    joe = new User({ name: 'joe' });
     joe.save()
       .then(() => done());
   });
@@ -55,12 +55,15 @@ describe('Updating records', () => {
   // Find the users, update postCount by 1 without fetching to the server
 
   // Topic: mongo update operators
-  it('A user can have the post count incremented by 1', (done) => {
-    User.updateOne({ name: 'joe' }, { $inc: { postCount: 1 } })
-      .then(() => User.findOne({ name: 'joe' }))
-      .then((user) => {
-        assert(user.postCount === 1);
-        done();
-      });
-  });
+
+  // this test was used when postCount was a property instead of a virtual type
+
+  // it('A user can have the post count incremented by 1', (done) => {
+  //   User.updateOne({ name: 'joe' }, { $inc: { postCount: 1 } })
+  //     .then(() => User.findOne({ name: 'joe' }))
+  //     .then((user) => {
+  //       assert(user.postCount === 1);
+  //       done();
+  //     });
+  // });
 });

@@ -54,6 +54,8 @@ before((done) => {
 
 // beforeEach is a hook. A hook is a function that will be executed before any test gets executed inside our test suite  
 beforeEach((done) => {
+  /* We need to drop all the collections. All the names should be lowercase */
+  const { users, comments, blogposts } = mongoose.connection.collections;
   // So now the challenge is inside of this function we need to somehow find our collection of users and drop all of the records inside it.
 
   // Mongoose gives a nice handler for that
@@ -68,15 +70,22 @@ beforeEach((done) => {
   // start long running process
   // call 'done' callback
   // tests continue running
-  mongoose.connection.collections.users.drop(() => {
-    // this is a callback function which gets executed once all the users are completely dropped
+  // mongoose.connection.collections.users.drop(() => {
+  users.drop(() => {
+    comments.drop(() => {
+      blogposts.drop(() => {
+        done();
+      });
+    });
+  })
+  // this is a callback function which gets executed once all the users are completely dropped
 
-    // Ready to run next test
+  // Ready to run next test
 
-    // Next is 'done' callback, every single function that we write inside of mocha, gets a 'done' callback
+  // Next is 'done' callback, every single function that we write inside of mocha, gets a 'done' callback
 
-    // Tells that everything inside beforeEach is done executing
-    done();
+  // Tells that everything inside beforeEach is done executing
+  // done();
 
-  });
+  // });
 });
