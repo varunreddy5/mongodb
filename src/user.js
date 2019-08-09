@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'blogPost'
   }],
-  posts: [PostSchema] /* Ignore this */ /* look down for more code */ 
+  posts: [PostSchema] /* Ignore this */ /* look down for more code */
   // User has many posts. We shouldn't create a seperate model as we do in SQL.
 
   /* Solution */
@@ -64,6 +64,28 @@ UserSchema.virtual('postCount').get(function () {
 // So we're going to use an idea called Virtual types inside of mongoose.
 
 // Definition: A virtual type is ny field on a model like postCount in our case that does not get persisted over to our mongoDB we instead define the postCount property on our server so anytime we try to access this post count we will calculate the number of posts we have by just looking at the length of the array and then we return that number
+
+// About middleware in app.js
+UserSchema.pre('remove', function (next) {
+  // ideally we would say just BlogPost.remove and something something. But this may not work sometimes. Here's why...
+
+  // If I make a direct reference to blog post right here by loading up by using require but the problem is, if the blogPost model also requires User then there will be a deadlock cycle which to open first. So it;s better to just completely avoid this type of situation and load up here. Because this function runs only when there is an event by that time everything will be completely loaded up.
+
+  const BlogPost = mongoose.model('blogPost');
+  // this === joe
+  // keep in mind we have to remove the posts associated with the particular user. The basic approach is to iterate through all the blog posts and if the post id is present in this.blogposts array then remove it.
+
+  // To avoid such complex situation mongoose provides a build in operator similar to $inc such as $in
+
+  BlogPost.remove({ _id: { $in: this.blogPosts } })
+    .then(() => next());
+  // Implies go through all the blogposts. Look at all their ids. If the ID is in the list right here go ahead and remove it
+
+  // Also we have to make sure that the entire middleware is executed before our record is actually removed, so to accomodate that we use next()
+
+
+
+});
 
 
 const User = mongoose.model('user', UserSchema);

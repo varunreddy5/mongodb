@@ -35,3 +35,19 @@ iot:PRIMARY> db.header.find()
 
 So, you need to be connected WANTED database with use command and you need to show the one collection what you want to query with db.<collection_name>.find()
 */
+
+/* Cleaning up middleware */
+// Since the user is the root, if we delete a record like the user I want automatically clean up their blog posts as well
+
+// To do resource clean up in this manner we're going to use a system in mongoose called middleware which are also referred as 'pre' and 'post' hooks
+
+// How middleware works
+
+// There's pre and post middlewares which are reference to which side of the event that the middleware runs
+
+/* Example */
+
+// One type of event that we might watch for is a save, so any time we are about to save a record to our database run middleware#1 and middleware#2, once the record is successfully saved run middleware#3 and middleware#4
+// Important event: 'remove' which can be used for the cleanup 
+
+// Middlewares are written in model files
